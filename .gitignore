@@ -1,4 +1,7 @@
 /venv
-.env
+.env.fastapi
+.env.jwt
+.env.postgres
+.env.redis
 __pycache__/
 temp_needs.txt

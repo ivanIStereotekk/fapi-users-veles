@@ -11,7 +11,8 @@ from fastapi_cache.backends.redis import RedisBackend
 from fastapi_cache.decorator import cache
 
 from redis import asyncio as aioredis
-from settings import REDIS_URL,CACHE_PREFIX
+from settings import REDIS_URL,CACHE_PREFIX,CONTACT_EMAIL,CONTACT_NAME,\
+    API_DESCRIPTION,API_TITLE
 
 
 tags_meta = [
@@ -47,10 +48,10 @@ tags_meta = [
 ]
 
 # OpenAPI  - P R E S E N T A T I O N    D A T A
-contact_dict = dict(name=config['CONTACT_NAME'],
-                    email=config['CONTACT_EMAIL'],
+contact_dict = dict(name=CONTACT_NAME,
+                    email=CONTACT_EMAIL,
                                   )
-app = FastAPI(title=config['API_TITLE'],description=config['API_DESCRIPTION'],contact=contact_dict,openapi_tags=tags_meta)
+app = FastAPI(title=API_TITLE,description=API_DESCRIPTION,contact=contact_dict,openapi_tags=tags_meta)
 
 # Employee Router - Imported from module employee.py
 app.include_router(

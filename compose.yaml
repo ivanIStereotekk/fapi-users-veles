@@ -1,0 +1,29 @@
+services:
+  app:
+    command: uvicorn src.app:app --host 0.0.0.0 --port 80
+    build: .
+    ports:
+      - "80:80"
+    restart: always
+    links:
+      - postgres_db
+    depends_on:
+      - postgres_db
+ 
+
+  postgres_db:
+    build: ./database
+    env_file:
+      - path: ./.env
+    environment:
+       POSTGRES_USER: ${POSTGRES_USER}
+       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+       POSTGRES_DB: ${POSTGRES_DB}
+    ports:
+      - "5432:5432"
+    restart: always
+  redis_cache:
+    image: 'bitnami/redis:latest'
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+

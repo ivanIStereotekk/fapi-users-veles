@@ -167,9 +167,3 @@ async def delete_employee(
         return CustomizedORJSONResponse(status_code=status.HTTP_400_BAD_REQUEST,content={"detail":str(e)})
 
 
-
-from fastapi.responses import RedirectResponse, Response
-@employee_router.get('/redirect')
-async def redirect(response: Response):
-    response.init_headers
-    return RedirectResponse("http://127.0.0.1:8000/docs",headers={"WWW-Authenticate": "Bearer"})

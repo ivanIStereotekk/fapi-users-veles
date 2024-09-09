@@ -74,11 +74,11 @@ async def create_company(
 
 
 
-@cmp_router.put("/update/{company_id}")
+@cmp_router.put("/update/{company_id}",response_class=CustomizedORJSONResponse)
 async def update_company(
     company_id: int,
     company: CompanyUpdate,
-    user: User = Depends(current_active_user), # T E M P O R A R Y - only superuser may update Employee
+    user: User = Depends(current_active_user), 
     # user: User = Depends(current_superuser)
     session: AsyncSession = Depends(get_async_session),
     ):
@@ -119,15 +119,16 @@ async def update_company(
                 )
             await session.execute(statement)
             await session.commit()
+            return CustomizedORJSONResponse(content={"detail":"created"},status_code=status.HTTP_201_CREATED)
     except SQLAlchemyError as e:                            # <<<< later will do e  to logger
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,detail=str(e._message))
+        raise CustomizedORJSONResponse(status_code=status.HTTP_400_BAD_REQUEST,detail=str(e._message))
     # return Response(status_code=201)
 
 
 
 # DELETE COMPANY
 
-@cmp_router.delete("/delete/{company_id}")
+@cmp_router.delete("/delete/{company_id}",response_class=CustomizedORJSONResponse)
 async def delete_company(
     company_id: int,
     user: User = Depends(current_active_user), # T E M P O R A R Y - only superuser may update Employee
@@ -151,14 +152,14 @@ async def delete_company(
                 await session.delete(del_company)
                 await session.commit()
             elif not del_company:
-                return Response(status_code=status.HTTP_404_NOT_FOUND,content="not exist",background=print(str(del_company))) # Logger binding with background param
+                return CustomizedORJSONResponse(status_code=status.HTTP_404_NOT_FOUND,content={"detail":"not found"}) # Logger binding with background param
                 
     except SQLAlchemyError as e:                            # <<<< later will do e  to logger
-        raise HTTPException(status_code=404,detail=str(e._message))
-    return Response(status_code=status.HTTP_200_OK)
+        raise CustomizedORJSONResponse(status_code=status.HTTP_400_BAD_REQUEST,detail=str(e._message))
+    return CustomizedORJSONResponse(status_code=status.HTTP_201_CREATED,content={"detail":"deleted"})
 
 
-@cmp_router.get("/get/{company_id}") #,response_model=CompanyRead)
+@cmp_router.get("/get/{company_id}",response_class=CustomizedORJSONResponse) #,response_model=CompanyRead)
 async def get_company_id(
     company_id: int,
     user: User = Depends(current_active_user), # T E M P O R A R Y - only superuser may update Employee
@@ -179,10 +180,9 @@ async def get_company_id(
         if user and company_id:
             company = await session.get(Company, company_id)
             if company:
-                return company
+                return CustomizedORJSONResponse(status_code=status.HTTP_200_OK,content=company)
     except SQLAlchemyError as e:                            # <<<< later will do e  to logger
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,detail=str(e._message))
-    return Response(status_code=status.HTTP_404_NOT_FOUND)
+        raise CustomizedORJSONResponse(status_code=status.HTTP_404_NOT_FOUND,detail=str(e._message))
 
 
 # Response.background = logger

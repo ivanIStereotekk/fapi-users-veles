@@ -25,10 +25,17 @@ ROUTER_API_RESPONSES_OPEN_API = {
         status.HTTP_401_UNAUTHORIZED: {  
             "description": "UNAUTHORIZED",
         },
+        status.HTTP_422_UNPROCESSABLE_ENTITY: {
+            "description": "UNPROCESSABLE ENTITY"
+        }
     }
 
+    
 class CustomizedORJSONResponse(Response):
-    media_type = "application/json"
-    def render(self,content: Any,status_code: Any,background:BackgroundTask) -> bytes:
+    media_type: str = "application/json"
+    status_code: int
+    content: Any
+    background: BackgroundTask 
+    def render(self, content: Any) -> bytes:
         assert orjson is not None, "orjson must be installed"
-        return orjson.dumps(content,status_code,option=orjson.OPT_INDENT_2)
+        return orjson.dumps(content, option=orjson.OPT_INDENT_2)

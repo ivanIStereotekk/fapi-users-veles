@@ -45,7 +45,7 @@ async def create_company(
     ##### Please read schema for understanding JSON schema
     """
     try:
-        if isinstance(company,CompanyCreate): # temporary check
+        if company: # temporary check
             new_company = Company(
                 name = company.name,
                 director = user.id,
@@ -67,14 +67,14 @@ async def create_company(
             )
             session.add(new_company)
             await session.commit()
-            return CustomizedORJSONResponse(status_code=status.HTTP_201_CREATED,content={"detail":"created"})    
+        return new_company
     except SQLAlchemyError as e:
-        return CustomizedORJSONResponse(status_code=status.HTTP_400_BAD_REQUEST,detail=str(e._message))    
+        return e    
 
 
 
 
-@cmp_router.put("/update/{company_id}",response_class=CustomizedORJSONResponse)
+@cmp_router.put("/update/{company_id}")
 async def update_company(
     company_id: int,
     company: CompanyUpdate,
@@ -119,16 +119,16 @@ async def update_company(
                 )
             await session.execute(statement)
             await session.commit()
-            return CustomizedORJSONResponse(content={"detail":"created"},status_code=status.HTTP_201_CREATED)
+            return CustomizedORJSONResponse(content={"detail":"created"},status_code=status.HTTP_201_CREATED,background=None)
     except SQLAlchemyError as e:                            # <<<< later will do e  to logger
-        raise CustomizedORJSONResponse(status_code=status.HTTP_400_BAD_REQUEST,detail=str(e._message))
+        raise CustomizedORJSONResponse(status_code=status.HTTP_400_BAD_REQUEST,content={"detail":str(e._message)},background=None)
     # return Response(status_code=201)
 
 
 
 # DELETE COMPANY
 
-@cmp_router.delete("/delete/{company_id}",response_class=CustomizedORJSONResponse)
+@cmp_router.delete("/delete/{company_id}")
 async def delete_company(
     company_id: int,
     user: User = Depends(current_active_user), # T E M P O R A R Y - only superuser may update Employee
@@ -152,14 +152,14 @@ async def delete_company(
                 await session.delete(del_company)
                 await session.commit()
             elif not del_company:
-                return CustomizedORJSONResponse(status_code=status.HTTP_404_NOT_FOUND,content={"detail":"not found"}) # Logger binding with background param
-                
+                return CustomizedORJSONResponse(status_code=status.HTTP_404_NOT_FOUND,content={"detail":"not found"},background=None) # Logger binding with background param
+            return CustomizedORJSONResponse(status_code=status.HTTP_201_CREATED,content={"detail":"created"})            
     except SQLAlchemyError as e:                            # <<<< later will do e  to logger
-        raise CustomizedORJSONResponse(status_code=status.HTTP_400_BAD_REQUEST,detail=str(e._message))
-    return CustomizedORJSONResponse(status_code=status.HTTP_201_CREATED,content={"detail":"deleted"})
+        raise CustomizedORJSONResponse(status_code=status.HTTP_400_BAD_REQUEST,content={"detail":str(e._message)})
+    
 
 
-@cmp_router.get("/get/{company_id}",response_class=CustomizedORJSONResponse) #,response_model=CompanyRead)
+@cmp_router.get("/get/{company_id}") #,response_model=CompanyRead)
 async def get_company_id(
     company_id: int,
     user: User = Depends(current_active_user), # T E M P O R A R Y - only superuser may update Employee
@@ -180,9 +180,9 @@ async def get_company_id(
         if user and company_id:
             company = await session.get(Company, company_id)
             if company:
-                return CustomizedORJSONResponse(status_code=status.HTTP_200_OK,content=company)
+                return CustomizedORJSONResponse(status_code=status.HTTP_200_OK,content={"detail":company},background=None)
     except SQLAlchemyError as e:                            # <<<< later will do e  to logger
-        raise CustomizedORJSONResponse(status_code=status.HTTP_404_NOT_FOUND,detail=str(e._message))
+        raise CustomizedORJSONResponse(status_code=status.HTTP_400_BAD_REQUEST,content={"detail":str(e._message)},background=None)
 
 
 # Response.background = logger

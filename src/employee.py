@@ -1,5 +1,6 @@
 
 from fastapi import APIRouter, Depends, HTTPException, Response
+from pydantic import BaseModel, Field, Json
 from starlette.responses import JSONResponse
 from src.users import *
 from sqlalchemy.exc import SQLAlchemyError
@@ -11,12 +12,20 @@ from src.schemas import EmployeeRead, EmployeeUpdate,EmployeeCreate
 from sqlalchemy import select, update
 from starlette import status
 from src.custom_responses import *
+import json
+from sqlalchemy import bindparam
 
 
 employee_router = APIRouter(
     prefix="/employee",
     responses=ROUTER_API_RESPONSES_OPEN_API,
 )
+
+
+class ECreate(BaseModel):
+    user_id: Optional[int] = Field(default=None)
+    position: Optional[str] = Field(default=None)
+    company_id: Optional[int] = Field()
 
 @employee_router.post("/add",response_class=CustomizedORJSONResponse)
 async def create_employee(
@@ -40,15 +49,16 @@ async def create_employee(
         if isinstance(employee.position,str): # temporary checker
             new_employee = Employee(
             user_id=employee.user_id,
+            department= employee.department,
             position=employee.position,
-            obligations=employee.obligations,
+            obligations= employee.obligations, #json.loads(str(employee.obligations)),
             company_id=employee.company_id,
             )
             session.add(new_employee)
             await session.commit()
-            return {"detail": "created"}
+            return CustomizedORJSONResponse(content={"detail": "created"},status_code=status.HTTP_201_CREATED)
     except SQLAlchemyError as e:
-        return CustomizedORJSONResponse(status_code=status.HTTP_400_BAD_REQUEST,detail=str(e))
+        return CustomizedORJSONResponse(status_code=status.HTTP_400_BAD_REQUEST,content=str(e))
 
         
 
@@ -75,22 +85,22 @@ async def update_employee(
     """
     try:
         if user:
+            
             statement = update(
             Employee).where(
                 Employee.user_id == user_id).values(
-                    user_id=employee.user_id,
                     position=employee.position,
                     obligations=employee.obligations,
+                    department=employee.department,
                     company_id=employee.company_id,
                 )
             await session.execute(statement)
             await session.commit()
-            return CustomizedORJSONResponse(content={"detail":"updated"},status_code=status.HTTP_201_CREATED)
+            return CustomizedORJSONResponse(content={"detail":"updated"},status_code=status.HTTP_202_ACCEPTED)
     except SQLAlchemyError as e:  
         # <<< logging here
-        return CustomizedORJSONResponse(status_code=status.HTTP_404_NOT_FOUND,content={"detail":str(e)})                          # <<<< later will do e  to logger
-    #     raise HTTPException(status_code=404,detail=status.HTTP_404_NOT_FOUND)
-    # return CreatedJSONResponse
+        return CustomizedORJSONResponse(status_code=status.HTTP_400_BAD_REQUEST,content={"detail":str(e)})                          # <<<< later will do e  to logger
+
 
 
 
@@ -165,5 +175,7 @@ async def delete_employee(
 
     except SQLAlchemyError as e:                            # <<<< later will do e  to logger
         return CustomizedORJSONResponse(status_code=status.HTTP_400_BAD_REQUEST,content={"detail":str(e)})
+
+
 
 

@@ -1,5 +1,5 @@
 import uuid
-from typing import Optional,Union,AnyStr,Any,List
+from typing import Optional,Union,AnyStr,Any,List,Dict
 from datetime import datetime, date
 from fastapi_users import schemas
 from pydantic import field_validator,Field,Json
@@ -63,10 +63,23 @@ class UserUpdate(schemas.BaseUserUpdate):
 
 # E M P L O Y E E     S C H E M A S
 
+# Department
+from enum import Enum
+
+class DepartmentEnum(Enum):
+    """Department Default Fields"""
+    finances = 'Finances'
+    engineering = 'Engineering'
+    logistic = 'Logistic'
+    management = 'Management'
+    construction = 'Construction'
+    top_management = 'Top management'
+
 class EmployeeRead(BaseModel):
     user_id: int
     position: str
-    obligations: Json
+    obligations: Dict
+    department: DepartmentEnum
     company_id: int
     company: str
 
@@ -76,7 +89,8 @@ class EmployeeRead(BaseModel):
 class EmployeeCreate(BaseModel):
     user_id: Optional[int] = Field(default=None)
     position: Optional[str] = Field(default=None)
-    obligations: Json
+    department: Optional[DepartmentEnum]
+    obligations: Dict[str, bool]
     company_id: Optional[int] = Field()
 
 
@@ -84,7 +98,8 @@ class EmployeeCreate(BaseModel):
     
 class EmployeeUpdate(BaseModel):
     position: Optional[str] = Field(default=None)
-    obligations: Json
+    obligations: Dict[str, bool]
+    department: Optional[DepartmentEnum] 
     company_id: Optional[int] = Field()
     # option_one: Optional[List] = Field(default=None)
     # option_two: Optional[List] = Field(default=None)

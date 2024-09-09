@@ -15,9 +15,10 @@ from sqlalchemy import select, update
 from starlette import status
 from fastapi_cache.decorator import cache as cache_decorator
 from fastapi_redis_cache import cache_one_minute
-from src.custom_responses import *
-current_user = fastapi_users.current_user(active=True)
+from src.custom_responses import CustomizedORJSONResponse, ROUTER_API_RESPONSES_OPEN_API
 
+
+current_user = fastapi_users.current_user(active=True)
 
 cmp_router = APIRouter(prefix="/company",
     responses=ROUTER_API_RESPONSES_OPEN_API
@@ -26,18 +27,18 @@ cmp_router = APIRouter(prefix="/company",
 
 
 
-@cmp_router.post("/add")
+@cmp_router.post("/add",response_class=CustomizedORJSONResponse)
 async def create_company(
     company: CompanyCreate,
     user: User = Depends(current_active_user), # T E M P O R A R Y implementation are current_userlater it should do superuser
-    # user: User = Depends(current_superuser)     
+    # user: User = Depends(current_active_user)     
     session: AsyncSession = Depends(get_async_session),
     ):
     """
     ### Async method that creates Company item:\n
     Company - are created by registred ***user***, user who creates company is superuser and admin for particular company  .\n
     Args:\n
-        user - Depends(current_superuser).\n
+        user - Depends(current_active_user).\n
         session - (AsyncSession) Depends(get_async_session).\n
         company - CompanyCreate schema\n
     #### *Only director my change Company data.
@@ -66,9 +67,9 @@ async def create_company(
             )
             session.add(new_company)
             await session.commit()
-            return JSONResponse(status_code=status.HTTP_201_CREATED,content={"detail":"created"})    
+            return CustomizedORJSONResponse(status_code=status.HTTP_201_CREATED,content={"detail":"created"})    
     except SQLAlchemyError as e:
-        return HTTPException(status_code=status.HTTP_400_BAD_REQUEST,detail=str(e._message))    
+        return CustomizedORJSONResponse(status_code=status.HTTP_400_BAD_REQUEST,detail=str(e._message))    
 
 
 

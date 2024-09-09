@@ -2,7 +2,8 @@ import uuid
 from typing import Optional,Union,AnyStr,Any,List
 from datetime import datetime, date
 from fastapi_users import schemas
-from pydantic import field_validator,Field
+from pydantic import field_validator,Field,Json
+
 
 from pydantic import (
     ValidationInfo,
@@ -65,7 +66,7 @@ class UserUpdate(schemas.BaseUserUpdate):
 class EmployeeRead(BaseModel):
     user_id: int
     position: str
-    obligations: bytes
+    obligations: Json
     company_id: int
     company: str
 
@@ -75,7 +76,7 @@ class EmployeeRead(BaseModel):
 class EmployeeCreate(BaseModel):
     user_id: Optional[int] = Field(default=None)
     position: Optional[str] = Field(default=None)
-    obligations: Optional[str] = Field(default=None)
+    obligations: Json
     company_id: Optional[int] = Field()
 
 
@@ -83,7 +84,7 @@ class EmployeeCreate(BaseModel):
     
 class EmployeeUpdate(BaseModel):
     position: Optional[str] = Field(default=None)
-    obligations: Optional[str] = Field(default=None)
+    obligations: Json
     company_id: Optional[int] = Field()
     # option_one: Optional[List] = Field(default=None)
     # option_two: Optional[List] = Field(default=None)
@@ -107,7 +108,7 @@ class CompanyCreate(BaseModel):
     bank_name: Optional[str] = Field()
     bank_address: Optional[str] = Field()
     corr_account: Optional[str] = Field()
-    employees: List = None
+    employees: Optional[List]
     @field_validator('phone')
     @classmethod
     def check_numeric(cls, v: str, info: ValidationInfo) -> str:
@@ -134,7 +135,7 @@ class CompanyUpdate(BaseModel):
     bank_name: Optional[str] = Field()
     bank_address: Optional[str] = Field()
     corr_account: Optional[str] = Field()
-    employees: List
+    employees: Optional[list]
     @field_validator('phone')
     @classmethod
     def check_numeric(cls, v: str, info: ValidationInfo) -> str:
@@ -159,10 +160,10 @@ class CompanyRead(BaseModel):
     INN: str 
     KPP: str 
     OGRN: str 
-    OKPO: Optional[ str | None ]
+    OKPO: str
     BIK: str 
     bank_name: str 
     bank_address: str 
     corr_account: str 
-    employees: Optional[ List | None ]
+    employees: list
 

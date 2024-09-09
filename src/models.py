@@ -7,7 +7,7 @@ from sqlalchemy import String, Date, ForeignKey,LargeBinary,Integer,Boolean, Dat
 from datetime import date
 from sqlalchemy.dialects.postgresql import ARRAY, JSONB
 import uuid
-
+import json
 
 Base: DeclarativeMeta = declarative_base()
 
@@ -50,7 +50,7 @@ class Employee(Base):
     user_id: Mapped[int] = mapped_column(ForeignKey("user_table.id"),unique=True)
     position: Mapped[str] = mapped_column(String,nullable=True)
     department: Mapped[str] = mapped_column(String,nullable=True)
-    obligations: Mapped[str] = mapped_column(JSONB,nullable=True) # JSON object inside 
+    obligations = mapped_column(JSONB,nullable=True) # JSON object inside 
     company_id: Mapped[int] = mapped_column(ForeignKey("company_table.id"),nullable=True)
     company: Mapped["Company"] = relationship(back_populates="employees")
     

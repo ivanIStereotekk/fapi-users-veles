@@ -9,6 +9,7 @@ services:
       - postgres_db
     depends_on:
       - postgres_db
+    image: stereotekk/veles-auth:app
  
 
   postgres_db:
@@ -22,8 +23,11 @@ services:
     ports:
       - "5432:5432"
     restart: always
+    image: stereotekk/veles-auth:postgres_db
   redis_cache:
     image: 'bitnami/redis:latest'
     environment:
       - ALLOW_EMPTY_PASSWORD=yes
+
+
 

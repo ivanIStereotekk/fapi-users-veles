@@ -1,5 +1,5 @@
 # Open API inform
-PRODUCTION_BUILD = False
+PRODUCTION_BUILD = True
 CONTACT_NAME = 'Ivan Goncharov'
 CONTACT_EMAIL = 'ivan.stereotekk@gmail.com'
 API_TITLE = 'VELES REST API  - [ web application ]'

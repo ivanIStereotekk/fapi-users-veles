@@ -1,5 +1,5 @@
 # Open API inform
-PRODUCTION_BUILD = True
+PRODUCTION_BUILD = False
 CONTACT_NAME = 'Ivan Goncharov'
 CONTACT_EMAIL = 'ivan.stereotekk@gmail.com'
 API_TITLE = 'VELES REST API  - [ web application ]'
@@ -14,5 +14,6 @@ JWT_SECRET_KEY = e8cd77e6d45d7aa887a1a81d13512e135d9dbe9a62d16c3ee73bc51e2bb00c3
 JWT_TOKEN_LIFETIME = 10080
 JWT_ALGORITHM = "HS256"
 
-# CORS ORIGINS
-ORIGIN_URL = http://localhost
+# CORS ORIGIN URL:PORT
+ORIGIN_URL = localhost
+ORIGIN_PORT = 8000

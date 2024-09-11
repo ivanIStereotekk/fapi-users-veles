@@ -4,7 +4,7 @@ from src.users import auth_backend,  fastapi_users
 from fastapi.middleware.cors import CORSMiddleware
 from src.employee import employee_router 
 from src.company import cmp_router as company_router
-from settings import config
+from settings import config, swagger_ui_default_parameters
 from src.db import Base 
 from src.db import engine
 from fastapi_cache import FastAPICache
@@ -13,8 +13,7 @@ from fastapi_cache.decorator import cache
 
 from redis import asyncio as aioredis
 from settings import REDIS_URL,CACHE_PREFIX,CONTACT_EMAIL,CONTACT_NAME,\
-    API_DESCRIPTION,API_TITLE
-
+    API_DESCRIPTION,API_TITLE,CORS_ORIGIN_URLS,ALLOWED_METHODS
 
 
 
@@ -57,25 +56,27 @@ tags_meta = [
 contact_dict = dict(name=CONTACT_NAME,
                     email=CONTACT_EMAIL,
                                   )
-app = FastAPI(title=API_TITLE,description=API_DESCRIPTION,contact=contact_dict,openapi_tags=tags_meta)
+
+
+app = FastAPI(
+    title=API_TITLE,
+    description=API_DESCRIPTION,
+    contact=contact_dict,
+    openapi_tags=tags_meta,
+    swagger_ui_parameters=swagger_ui_default_parameters,
+    swagger_ui_init_oauth={"null"},
+    swagger_ui_oauth2_redirect_url="/auth/jwt/login",
+    )
 
 
 # CORS SETTINGS
-origins = [
-    "http://localhost",
-    "https://localhost/docs",
-    "http://localhost",
-    "http://localhost:8000",
-]
-
-all_allowed = ['*']
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=all_allowed,
+    allow_origins=CORS_ORIGIN_URLS,
     allow_credentials=True,
-    allow_methods=all_allowed,
-    allow_headers=all_allowed,
+    allow_methods=ALLOWED_METHODS,
+    allow_headers=["*"],
 )
 
 # Employee Router - Imported from module employee.py

@@ -3,6 +3,8 @@ import base64
 import subprocess
 import pydantic
 from pydantic_settings import BaseSettings, SettingsConfigDict
+from typing import Annotated, Any, Dict
+from typing_extensions import Doc
 
 # the class that imports from .envs
 class Settings(BaseSettings):
@@ -47,6 +49,33 @@ JWT_TOKEN_LIFETIME = config['jwt_token_lifetime']
 # Password Hashing - Since the beginning that was bytes but i cut b then made it bytes
 HASH_CRYPTO_KEY = bytes(config['hash_crypto_key'],'utf-8')
 RESET_PASSWORD_SECRET_KEY = bytes(config['reset_password_secret_key'],'utf-8')
+
+# CORS ORIGIN URLS - while development mode is - ['*'] allow all
+ORIGIN_URL = config['origin_url']
+ORIGIN_PORT = config['origin_port']
+# It's important to change port in compose.yaml while running in docker(production)
+
+CORS_ORIGIN_URLS = [
+    f"http://{ORIGIN_URL}",
+    f"https://{ORIGIN_URL}/docs",
+    f"http://{ORIGIN_URL}",
+    f"http://{ORIGIN_URL}:{ORIGIN_PORT}",
+] if PRODUCTION_BUILD == 'True' else ['*']
+
+ALLOWED_METHODS = [
+    "DELETE", 
+    "GET", 
+    "HEAD", 
+    "OPTIONS", 
+    "PATCH", 
+    "POST", 
+    "PUT"] if PRODUCTION_BUILD == 'True' else ['*']
+
+
+
+
+
+
 # OPEN API TAGS
 
 tags_meta = [
@@ -80,3 +109,20 @@ tags_meta = [
         },
     },
 ]
+
+
+swagger_ui_default_parameters: Annotated[
+    Dict[str, Any],
+    Doc(
+        """
+        Default configurations for Swagger UI.
+        """
+    ),
+] = {
+    "dom_id": "#swagger-ui",
+    "layout": "BaseLayout",
+    "deepLinking": False,
+    "showExtensions": True,
+    "showCommonExtensions": True,
+    "syntaxHighlight.theme": "obsidian"
+}

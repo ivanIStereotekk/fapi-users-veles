@@ -34,7 +34,7 @@ ORIGIN_PORT = 8000
 
 ### .env.postgres
 
-```.env.postgres
+```.env
 POSTGRES_PRODUCTION_URL = postgres_db
 POSTGRES_DEVELOPMENT_URL = localhost
 POSTGRES_PASSWORD = secret123

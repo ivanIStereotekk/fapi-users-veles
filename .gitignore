@@ -1,6 +1,5 @@
 /venv
-.env.fastapi
-.env.jwt
+.env.app
 .env.postgres
 .env.redis
 __pycache__/

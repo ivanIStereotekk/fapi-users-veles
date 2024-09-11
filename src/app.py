@@ -60,12 +60,12 @@ contact_dict = dict(name=CONTACT_NAME,
 app = FastAPI(title=API_TITLE,description=API_DESCRIPTION,contact=contact_dict,openapi_tags=tags_meta)
 
 
-
+# CORS SETTINGS
 origins = [
-    "http://localhost.tiangolo.com",
-    "https://localhost.tiangolo.com",
     "http://localhost",
-    "http://localhost:8080",
+    "https://localhost/docs",
+    "http://localhost",
+    "http://localhost:8000",
 ]
 
 all_allowed = ['*']
@@ -74,8 +74,8 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=all_allowed,
     allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_methods=all_allowed,
+    allow_headers=all_allowed,
 )
 
 # Employee Router - Imported from module employee.py

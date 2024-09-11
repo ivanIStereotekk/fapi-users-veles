@@ -22,11 +22,6 @@ employee_router = APIRouter(
 )
 
 
-class ECreate(BaseModel):
-    user_id: Optional[int] = Field(default=None)
-    position: Optional[str] = Field(default=None)
-    company_id: Optional[int] = Field()
-
 @employee_router.post("/add",response_class=CustomizedORJSONResponse)
 async def create_employee(
     employee: EmployeeCreate,

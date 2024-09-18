@@ -17,7 +17,8 @@ from pydantic import (
 
 # Base User
 class UserRead(schemas.BaseUser[int]):
-    username: str
+    firstname: str 
+    lastname: str 
     email: str
     phone: str
     picture: str
@@ -25,7 +26,8 @@ class UserRead(schemas.BaseUser[int]):
 
 
 class UserCreate(schemas.BaseUserCreate):
-    username: str = Field()
+    firstname: str = Field()
+    lastname: str = Field()
     email: str = Field()
     phone: str = Field()
     picture: str = Field(default=None)
@@ -43,13 +45,13 @@ class UserCreate(schemas.BaseUserCreate):
 
 
 
-class UserUpdate(schemas.BaseUserUpdate):
-    username: str = Field()
-    email: str = Field()
-    phone: str = Field()
-    picture: str = Field()
+class UserUpdate(BaseModel):
+    firstname: Optional[str] = Field()
+    lastname: Optional[str] = Field()
+    email: Optional[str] = Field()
+    phone: Optional[str] = Field()
+    picture: Optional[str] = Field()
     birth_date: date | None
-    password: str = Field()
     @field_validator('phone')
     @classmethod
     def check_numeric(cls, v: str, info: ValidationInfo) -> str:

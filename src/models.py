@@ -21,7 +21,8 @@ class User(SQLAlchemyBaseUserTable[int],Base):
     """
     __tablename__ = 'user_table'
     id: Mapped[int] = mapped_column(Integer, autoincrement=True, primary_key=True)
-    username: Mapped[str] = mapped_column(String,nullable=False)
+    firstname: Mapped[str] = mapped_column(String,nullable=False)
+    lastname: Mapped[str] = mapped_column(String,nullable=False)
     email: Mapped[str] = mapped_column(String, unique=True,nullable=False)
     phone: Mapped[str] = mapped_column(String,unique=True, nullable=False)
     picture: Mapped[str] = mapped_column(String)
@@ -32,7 +33,7 @@ class User(SQLAlchemyBaseUserTable[int],Base):
     is_verified: Mapped[bool] = mapped_column(Boolean, default=False)
 
     def __repr__(self):
-        return f" id={self.id} name= {self.username} "
+        return f" id={self.id} firstname= {self.firstname} lastname={self.lastname}"
 
 
 

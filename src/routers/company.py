@@ -20,14 +20,14 @@ from src.custom_responses import CustomizedORJSONResponse, ROUTER_API_RESPONSES_
 
 current_user = fastapi_users.current_user(active=True)
 
-cmp_router = APIRouter(prefix="/company",
+company_router = APIRouter(prefix="/company",
     responses=ROUTER_API_RESPONSES_OPEN_API
 )
 
 
 
 
-@cmp_router.post("/add",response_class=CustomizedORJSONResponse)
+@company_router.post("/add",response_class=CustomizedORJSONResponse)
 async def create_company(
     company: CompanyCreate,
     user: User = Depends(current_active_user), # T E M P O R A R Y implementation are current_userlater it should do superuser
@@ -74,7 +74,7 @@ async def create_company(
 
 
 
-@cmp_router.put("/update/{company_id}")
+@company_router.put("/update/{company_id}")
 async def update_company(
     company_id: int,
     company: CompanyUpdate,
@@ -128,7 +128,7 @@ async def update_company(
 
 # DELETE COMPANY
 
-@cmp_router.delete("/delete/{company_id}")
+@company_router.delete("/delete/{company_id}")
 async def delete_company(
     company_id: int,
     user: User = Depends(current_active_user), # T E M P O R A R Y - only superuser may update Employee
@@ -159,7 +159,7 @@ async def delete_company(
     
 
 
-@cmp_router.get("/get/{company_id}") #,response_model=CompanyRead)
+@company_router.get("/get/{company_id}") #,response_model=CompanyRead)
 async def get_company_id(
     company_id: int,
     user: User = Depends(current_active_user), # T E M P O R A R Y - only superuser may update Employee

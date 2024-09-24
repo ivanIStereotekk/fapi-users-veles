@@ -2,8 +2,8 @@ from fastapi import  FastAPI
 from src.schemas import UserCreate, UserRead, UserUpdate
 from src.users import auth_backend,  fastapi_users
 from fastapi.middleware.cors import CORSMiddleware
-from src.employee import employee_router 
-from src.company import cmp_router as company_router
+from src.routers.employee import employee_router 
+from src.routers.company import cmp_router as company_router
 from settings import config, swagger_ui_default_parameters
 from src.db import Base 
 from src.db import engine
